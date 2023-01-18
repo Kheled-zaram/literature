@@ -77,13 +77,11 @@ WSGI_APPLICATION = 'literature.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'books',
-        'USER': 'books',
-        'PASSWORD': 'books',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
-    }
+         'ENGINE': 'django.db.backends.oracle',
+         'NAME': 'jdbc:oracle:thin:@//labora:1521/LABS',
+         'USER': 'ak439761',
+         'PASSWORD': 'books',
+  }
 }
 
 # Password validation
