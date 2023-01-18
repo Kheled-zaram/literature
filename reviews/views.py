@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from .models import BooksData
+
 posts = [
     {
         'author': 'Brandon Sanderson',
@@ -16,11 +18,15 @@ posts = [
 ]
 
 def home(request):
+    # df = query('select * from books_users limit 1000')
     context = {
-        'posts': posts
+        'books': BooksData.objects.all()
     }
     return render(request, 'reviews/home.html', context)
 
 
 def about(request):
     return render(request, 'reviews/about.html', {'title': 'About'})
+
+
+# BooksData.objects.all()

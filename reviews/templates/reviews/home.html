@@ -1,9 +1,10 @@
 {% extends "reviews/base.html" %}
 {% block content %}
-    {% for post in posts %}
-        <h1>{{ post.title }}</h1>
-        <p>By {{ post.author }} published in {{ post.date_published }}</p>
-        <p>{{ post.content }}</p>
+    {% for book in books %}
+        <h1>{{ book.title }}</h1>
+        <p>Written by {{ book.author }}.</p>
+        <p>Published by {{ book.publisher }} in {{ book.year }}.</p>
+        <img width="200" src={{ book.image_url }}>
     {% endfor %}
 {% endblock content %}
 
