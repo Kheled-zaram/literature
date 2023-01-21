@@ -5,7 +5,11 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+from unicodedata import decimal
+
 from django.db import models
+from django.db.models import Avg, Count
+
 
 class BooksData(models.Model):
     isbn = models.CharField(primary_key=True, max_length=40)
@@ -22,7 +26,7 @@ class BooksData(models.Model):
 
 class BooksRating(models.Model):
     user = models.ForeignKey('BooksUser', models.CASCADE)
-    isbn = models.ForeignKey('BooksData', models.CASCADE)
+    book = models.ForeignKey('BooksData', models.CASCADE)
     rating = models.DecimalField(max_digits=4, decimal_places=0)
 
     class Meta:

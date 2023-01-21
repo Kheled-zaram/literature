@@ -27,7 +27,8 @@
                 </div>
                 <div class="form-group col-md-2 col-lg-2">
                     <label for="publishDateMax">Publish year maximum</label>
-                    <input type="number" min=0 class="form-control" id="publishDateMax" name="max_year" placeholder="2023">
+                    <input type="number" min=0 class="form-control" id="publishDateMax" name="max_year"
+                           placeholder="2023">
                 </div>
                 <div class="form-group col-md-4">
                     <label for="publisher">Publisher</label>
@@ -39,23 +40,34 @@
                     </select>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="reviewed" name="reviewed">
-                    <label class="form-check-label" for="reviewed">
-                        Rated
-                    </label>
+            <div class="form-row">
+                <div class="form-group col-md-4">
+                    <select id="sort" class="form-control" name="sort">
+                        <option selected>Sort by...</option>
+                        {% for option in options %}
+                            <option value="{{ option }}">{{ option }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="notReviewed" name="notReviewed">
-                    <label class="form-check-label" for="notReviewed">
-                        Not rated
-                    </label>
+                <div class="form-group col-md-4">
+                    <select id="order" class="form-control" name="order">
+                        <option selected>Order...</option>
+                        {% for order in order_types %}
+                            <option value="{{ order }}">{{ order }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
             <button class="btn dark-blue-btn my-2 my-sm-0" type="submit">Filter</button>
+            <button id="removeFilters" class="btn dark-blue-btn my-2 my-sm-0">Remove Filters</button>
+
+            <script type="text/javascript">
+                document.getElementById("removeFilters").onclick = function () {
+                    var currentUrl = "{% url 'reviews-home' %}";
+                    var newUrl = currentUrl.split("?")[0];
+                    location.href = newUrl;
+                };
+            </script>
         </form>
     </div>
 {% endblock filter_bar %}
@@ -63,9 +75,24 @@
     {% for book in books %}
         <h1>{{ book.title }}</h1>
         <p>Written by {{ book.author }}.</p>
-        <p>Published by {{ book.publisher }} in {{ book.year }}.</p>
-        <img width="200" src={{ book.image_url }}>
+        {% if book.publisher %}
+            <p>Published by {{ book.publisher.name }} in {{ book.year }}.</p>
+        {% endif %}
+        {% if book.average_rating %}
+            <p>Rating: <span class="rating">{{ book.average_rating }}</span> from {{ book.count_rating }} votes.</p>
+        {% endif %}
+        {% if book.image_url %}
+            <img width="200" src={{ book.image_url }}>
+        {% endif %}
+        <br><br>
     {% endfor %}
+
+    <script>
+        var ratings = document.getElementsByClassName("rating");
+        for (var i = 0; i < ratings.length; i++) {
+            ratings[i].innerHTML = (Math.round(ratings[i].innerHTML * 100) / 100).toFixed(2)
+        }
+    </script>
 {% endblock content %}
 
 
