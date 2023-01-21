@@ -1,4 +1,64 @@
 {% extends "reviews/base.html" %}
+{% block search_bar %}
+    <form class="form-inline my-2 my-lg-0" action="{% url 'reviews-home' %}">
+        <input class="search-bar form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"
+               name="search">
+        <button class="btn dark-blue-btn my-2 my-sm-0" type="submit">Search</button>
+    </form>
+{% endblock search_bar %}
+{% block filter_bar %}
+    <button type="button" class="filter__button">Filters</button>
+    <div class="filter__content selector-filter">
+        <form method="GET" action=".">
+            <div class="form-row">
+                <div class="form-group col-md-2 col-lg-2">
+                    <label for="minRating">Minimum Rating</label>
+                    <input type="number" min=0 max=10 class="form-control" id="minRating" placeholder="0"
+                           name="min_rating">
+                </div>
+                <div class="form-group col-md-2 col-lg-2">
+                    <label for="maxRating">Maximum Rating</label>
+                    <input type="number" min=0 max=10 class="form-control" id="maxRating" placeholder="10"
+                           name=max_rating">
+                </div>
+                <div class="form-group col-md-2 col-lg-2">
+                    <label for="publishDateMin">Publish year minimum</label>
+                    <input type="number" min=0 class="form-control" id="publishDateMin" name="min_year" placeholder="0">
+                </div>
+                <div class="form-group col-md-2 col-lg-2">
+                    <label for="publishDateMax">Publish year maximum</label>
+                    <input type="number" min=0 class="form-control" id="publishDateMax" name="max_year" placeholder="2023">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="publisher">Publisher</label>
+                    <select id="publisher" class="form-control" name="publisher">
+                        <option selected>Choose...</option>
+                        {% for publisher in publishers %}
+                            <option value="{{ publisher.name }}">{{ publisher.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="reviewed" name="reviewed">
+                    <label class="form-check-label" for="reviewed">
+                        Rated
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="notReviewed" name="notReviewed">
+                    <label class="form-check-label" for="notReviewed">
+                        Not rated
+                    </label>
+                </div>
+            </div>
+            <button class="btn dark-blue-btn my-2 my-sm-0" type="submit">Filter</button>
+        </form>
+    </div>
+{% endblock filter_bar %}
 {% block content %}
     {% for book in books %}
         <h1>{{ book.title }}</h1>
@@ -7,4 +67,5 @@
         <img width="200" src={{ book.image_url }}>
     {% endfor %}
 {% endblock content %}
+
 

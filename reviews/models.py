@@ -8,11 +8,11 @@
 from django.db import models
 
 class BooksData(models.Model):
-    id = models.CharField(primary_key=True, max_length=40)
+    isbn = models.CharField(primary_key=True, max_length=40)
     title = models.CharField(max_length=300)
     author = models.CharField(max_length=200)
     year = models.DecimalField(max_digits=4, decimal_places=0, blank=True, null=True)
-    publisher = models.CharField(max_length=200, blank=True, null=True)
+    publisher = models.ForeignKey('BooksPublisher', models.DO_NOTHING)
     image_url = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
@@ -39,3 +39,11 @@ class BooksUser(models.Model):
     class Meta:
         managed = False
         db_table = 'books_user'
+
+
+class BooksPublisher(models.Model):
+    name = models.CharField(unique=True, max_length=200)
+
+    class Meta:
+        managed = False
+        db_table = 'books_publisher'

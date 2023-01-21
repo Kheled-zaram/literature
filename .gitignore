@@ -1,0 +1,4 @@
+/useful_for_db_config.txt
+export ORACLE_SID=orcl
+export LD_LIBRARY_PATH=/opt/oracle/instantclient_21_8:$LD_LIBRARY_PATH
+export ORACLE_HOME=/opt/oracle/instantclient_21_

@@ -36,13 +36,19 @@
                 <!-- Navbar Right Side -->
                 <div class="navbar-nav">
                     <a class="nav-item nav-link" href="#">Login</a>
-                    <a class="nav-item nav-link" href="register/">Register</a>
+                    <a class="nav-item nav-link" href="{% url 'register' %}">Register</a>
                 </div>
             </div>
         </div>
     </nav>
 </header>
 <main role="main" class="container">
+    <div class="row search-bar-container">
+        {% block search_bar %}{% endblock %}
+    </div>
+    <div class="filter" data-filter-title="Filters">
+        {% block filter_bar %}{% endblock %}
+    </div>
     <div class="row">
         <div class="col-md-8">
             {% if messages %}
@@ -81,5 +87,25 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
         crossorigin="anonymous"></script>
+<script>
+    document.querySelectorAll('.filter__button').forEach(button => {
+        button.addEventListener('click', () => {
+            const filterContent = button.nextElementSibling;
+
+            button.classList.toggle('filter__button--active');
+
+            if (button.classList.contains('filter__button--active')) {
+                filterContent.style.maxHeight = filterContent.scrollHeight + 'px'
+            } else {
+                filterContent.style.maxHeight = 0 + 'px';
+            }
+        })
+    })
+</script>
+<script>
+    $(function() {
+    $( "#datepicker" ).datepicker({dateFormat: 'yy'});
+});
+</script>
 </body>
 </html>
