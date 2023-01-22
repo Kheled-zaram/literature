@@ -61,6 +61,8 @@ def home(request):
         else:
             books = books.order_by('-' + sort_query)
 
+    books = books[:50]
+
     context = {
         'books': books,
         'publishers': publishers,
