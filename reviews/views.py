@@ -1,9 +1,8 @@
-from django.db.models.functions import Round
-from django.forms import FloatField
-from django.shortcuts import render, get_object_or_404
-from .filters import ReviewsFilter
-from .models import BooksData, BooksPublisher, BooksRating
-from django.db.models import Q, Avg, Count, ExpressionWrapper
+from datetime import datetime
+
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import BooksData, BooksPublisher, BooksRating, BooksSession, BooksUser
+from django.db.models import Q, Avg, Count, ExpressionWrapper, Subquery, Max, OuterRef
 import pandas as pd
 from django.db import connection
 
@@ -20,7 +19,9 @@ sort_map = {
     'Popularity': 'count_rating'
 }
 
+
 def home(request):
+    session_exists = request.session.exists(request.session.session_key)
     publishers = BooksPublisher.objects.all().values('name')
     search_query = request.GET.get('search', '')
     if is_query_valid(search_query):
@@ -63,21 +64,43 @@ def home(request):
 
     books = books[:50]
 
+    if session_exists:
+        session = get_session(request)
+        if session:
+            user = session.user
+            books = books.annotate(
+                my_rating=Subquery(BooksRating.objects.filter(user=user, book=OuterRef('pk')).values('rating')))
+        else:
+            session_exists = False
+
     context = {
         'books': books,
         'publishers': publishers,
         'options': sorting_options,
-        'order_types':order_types,
+        'order_types': order_types,
+        'session_exists': session_exists,
     }
     return render(request, 'reviews/home.html', context)
 
 
-def about(request):
-    return render(request, 'reviews/about.html', {'title': 'About'})
-
-
 def search(request):
     return render(request, 'reviews/home.html')
+
+
+def rate(request):
+    user = get_user(request)
+    book_id = request.POST['book_id']
+    newRating = request.POST['rating']
+    book = None
+    if book_id:
+        book = BooksData.objects.get(isbn__exact=book_id)
+
+    if newRating and book and user:
+        booksRating = BooksRating(user=user, book=book, rating=newRating)
+        if not booksRating.id:
+            booksRating.id = BooksRating.objects.latest('id').id + 1
+        booksRating.save()
+    return redirect('reviews-home')
 
 
 def is_query_valid(param):
@@ -90,3 +113,22 @@ def get_data():
         data = cursor.fetchall()
     df = pd.DataFrame(data)
     return df
+
+
+def get_user(request):
+    session = get_session(request)
+    if session:
+        return session.user
+    return None
+
+
+def get_session(request):
+    session_exists = request.session.exists(request.session.session_key)
+    if session_exists:
+        try:
+            session = BooksSession.objects.get(session_key=request.session.session_key)
+        except BooksSession.DoesNotExist:
+            return None
+        if session.expire_date > datetime.now().date():
+            return session
+    return None

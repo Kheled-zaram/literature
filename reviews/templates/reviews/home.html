@@ -73,18 +73,36 @@
 {% endblock filter_bar %}
 {% block content %}
     {% for book in books %}
-        <h1>{{ book.title }}</h1>
-        <p>Written by {{ book.author }}.</p>
-        {% if book.publisher %}
-            <p>Published by {{ book.publisher.name }} in {{ book.year }}.</p>
-        {% endif %}
-        {% if book.average_rating %}
-            <p>Rating: <span class="rating">{{ book.average_rating }}</span> from {{ book.count_rating }} votes.</p>
-        {% endif %}
+        <div class="content-rows content">
+            <h1>{{ book.title }}</h1>
+            <p>Written by {{ book.author }}.</p>
+            {% if book.publisher %}
+                <p>Published by {{ book.publisher.name }} in {{ book.year }}.</p>
+            {% endif %}
+            {% if book.average_rating %}
+                <p>Rating: <span class="rating">{{ book.average_rating }}</span>
+                    from {{ book.count_rating }} votes.
+                </p>
+            {% endif %}
+            {% if session_exists and book.my_rating %}
+                <p>Your rating: <span class="rating">{{ book.my_rating }}</span>.</p>
+            {% elif session_exists %}
+                <div class="form-group col-md-2 col-lg-2">
+                    <form action="{% url 'rate' %}" method="post">
+                        {% csrf_token %}
+                        <label for="rate">Rate:</label>
+                        <input type="hidden" name="book_id" value="{{ book.isbn }}">
+                        <input type="number" min=0 max=10 class="form-control" id="rating" placeholder="0"
+                               name="rating">
+                        <br>
+                        <button class="btn dark-blue-btn my-2 my-sm-0" type="submit">Rate the book.</button>
+                    </form>
+                </div>
+            {% endif %}
+        </div>
         {% if book.image_url %}
-            <img width="200" src={{ book.image_url }}>
+            <img class="image" height="300" src={{ book.image_url }}>
         {% endif %}
-        <br><br>
     {% endfor %}
 
     <script>

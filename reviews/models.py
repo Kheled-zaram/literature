@@ -25,6 +25,7 @@ class BooksData(models.Model):
 
 
 class BooksRating(models.Model):
+    id = models.IntegerField(primary_key=True)
     user = models.ForeignKey('BooksUser', models.CASCADE)
     book = models.ForeignKey('BooksData', models.CASCADE)
     rating = models.DecimalField(max_digits=4, decimal_places=0)
@@ -51,3 +52,13 @@ class BooksPublisher(models.Model):
     class Meta:
         managed = False
         db_table = 'books_publisher'
+
+
+class BooksSession(models.Model):
+    user = models.ForeignKey('BooksUser', models.CASCADE)
+    session_key = models.CharField(max_length=40, primary_key=True)
+    expire_date = models.DateField(null=True)
+    class Meta:
+        managed = False
+        db_table = 'books_session'
+
